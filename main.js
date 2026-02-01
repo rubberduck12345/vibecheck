@@ -75,6 +75,7 @@ async function updateCityInfo(city, marker) {
 const cityMarkers = {};
 cities.forEach(city => {
     const marker = L.marker(city.coords).addTo(map);
+    marker.bindPopup(city.name); // BUG FIX: Re-bind a simple popup
     marker.on('click', () => updateCityInfo(city, marker));
     cityMarkers[city.name] = marker;
 });
