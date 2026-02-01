@@ -23,7 +23,10 @@ const cities = [
 
 // 4. 도시 정보 업데이트 및 표시 함수 (API 호출 분리)
 async function updateCityInfo(city, marker) {
-    marker.setPopupContent(`<b>${city.name}</b><br>정보를 불러오는 중...`).openPopup();
+    marker.setPopupContent(`
+        <div class="popup-header">${city.name}</div>
+        <div class="popup-content"><small>정보를 불러오는 중...</small></div>
+    `, { className: 'custom-popup' }).openPopup();
 
     const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${city.coords[0]}&lon=${city.coords[1]}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=kr`;
     const windyURL = `https://api.windy.com/api/webcams/v2/list/nearby=${city.coords[0]},${city.coords[1]},50?show=webcams:image,location`;
@@ -40,8 +43,8 @@ async function updateCityInfo(city, marker) {
         const weatherDesc = weatherData.weather[0].description;
         const weatherIcon = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
         weatherHtml = `
-            <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                <img src="${weatherIcon}" alt="${weatherDesc}" style="width: 40px; height: 40px; margin-right: 5px;">
+            <div class="weather-info">
+                <img src="${weatherIcon}" alt="${weatherDesc}">
                 <span>${weatherDesc}, ${temp}°C</span>
             </div>
         `;
@@ -52,13 +55,19 @@ async function updateCityInfo(city, marker) {
         const windyData = await windyResult.value.json();
         const webcam = windyData.result.webcams[0];
         if (webcam) {
-            webcamHtml = `<a href="${webcam.image.daylight.preview}" target="_blank"><img src="${webcam.image.daylight.preview}" alt="${webcam.title}" style="width: 100%; border-radius: 4px;"></a><br><small>${webcam.title}</small>`;
+            webcamHtml = `<a href="${webcam.image.daylight.preview}" target="_blank" class="webcam-link"><img src="${webcam.image.daylight.preview}" alt="${webcam.title}" class="webcam-image"></a><small class="webcam-title">${webcam.title}</small>`;
         } else {
             webcamHtml = '<small>주변에 이용 가능한 웹캠이 없습니다.</small>';
         }
     }
     
-    marker.setPopupContent(`<b>${city.name}</b><br><hr>${weatherHtml}${webcamHtml}`);
+    marker.setPopupContent(`
+        <div class="popup-header">${city.name}</div>
+        <div class="popup-content">
+            ${weatherHtml}
+            ${webcamHtml}
+        </div>
+    `, { className: 'custom-popup' });
 }
 
 
@@ -66,7 +75,6 @@ async function updateCityInfo(city, marker) {
 const cityMarkers = {};
 cities.forEach(city => {
     const marker = L.marker(city.coords).addTo(map);
-    marker.bindPopup(`<b>${city.name}</b>`);
     marker.on('click', () => updateCityInfo(city, marker));
     cityMarkers[city.name] = marker;
 });
