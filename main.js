@@ -29,11 +29,11 @@ async function updateCityInfo(city, marker) {
     `, { className: 'custom-popup' }).openPopup();
 
     const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${city.coords[0]}&lon=${city.coords[1]}&appid=${OPENWEATHER_API_KEY}&units=metric&lang=kr`;
-    const windyURL = `https://api.windy.com/api/webcams/v2/list/nearby=${city.coords[0]},${city.coords[1]},50?show=webcams:image,location`;
+    const windyURL = `https://api.windy.com/api/webcams/v2/list?nearby=${city.coords[0]},${city.coords[1]},50&show=webcams:image,location&key=${WINDY_API_KEY}`;
 
     const [weatherResult, windyResult] = await Promise.allSettled([
         fetch(weatherURL),
-        fetch(windyURL, { headers: { 'x-windy-key': WINDY_API_KEY } })
+        fetch(windyURL) // Removed headers option as key is in URL
     ]);
 
     let weatherHtml = '<small>날씨 정보 로딩 실패</small>';
