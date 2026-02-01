@@ -10,7 +10,10 @@
 <body>
     <header>
         <h1>Vibe Check</h1>
-        <input type="text" id="search-input" placeholder="도시를 검색하세요...">
+                <div class="search-container">
+            <input type="text" id="search-input" placeholder="도시를 검색하세요..." autocomplete="off">
+            <div id="autocomplete-results"></div>
+        </div>
     </header>
     <main>
         <div id="map"></div>
